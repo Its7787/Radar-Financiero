@@ -8,8 +8,8 @@
 
 // ── CONFIGURACIÓN DE SUPABASE ─────────────────────────────────
 // NOTA: Reemplaza estos valores con las credenciales reales de tu panel de Supabase
-const SUPABASE_URL = 'https://tu-proyecto-id.supabase.co';
-const SUPABASE_ANON_KEY = 'tu-anon-key-de-supabase-aqui';
+const SUPABASE_URL = 'https://uztufuwfuvxjvvrytpsb.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV6dHVmdXdmdXZ4anZ2cnl0cHNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyNTc3MjAsImV4cCI6MjA5NTgzMzcyMH0.QVdaZsNLgnA4aPlxqZBh2c5d5i-MQQd5LNEOSADzdvA';
 
 const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
