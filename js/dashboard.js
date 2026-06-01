@@ -9,9 +9,11 @@
 // ── CONFIGURACIÓN DE SUPABASE ─────────────────────────────────
 // NOTA: Reemplaza estos valores con las credenciales reales de tu panel de Supabase
 const SUPABASE_URL = 'https://uztufuwfuvxjvvrytpsb.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV6dHVmdXdmdXZ4anZ2cnl0cHNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyNTc3MjAsImV4cCI6MjA5NTgzMzcyMH0.QVdaZsNLgnA4aPlxqZBh2c5d5i-MQQd5LNEOSADzdvA';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV6dHVmdXdmdUX4anZ2cnl0cHNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyNTc3MjAsImV4cCI6MjA5NTgzMzcyMH0.QVdaZsNLgnA4aPlxqZBh2c5d5i-MQQd5LNEOSADzdvA';
 
- supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// CORRECCIÓN AQUÍ: Evitamos el choque de nombres declarando 'supabaseApp' y reasignando el cliente global
+const supabaseApp = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+supabase = supabaseApp;
 
 // ── ESTADOS DE LA APLICACIÓN ─────────────────────────────────
 let sessionUser = null;
@@ -23,17 +25,17 @@ let AHORRO_RATES = [];
 let CREDITO_RATES = [];
 let INDICATORS = [];
 let RECENT_CHANGES = [
-  { banco: 'Banco Unión',   producto: 'DPF', plazo: '360d', prev: 5.25, curr: 5.50, fecha: 'Hoy 09:30' },
-  { banco: 'BancoSol',      producto: 'DPF', plazo: '180d', prev: 4.10, curr: 4.30, fecha: 'Hoy 08:15' },
-  { banco: 'Banco Fie',     producto: 'DPF', plazo: '720d', prev: 6.00, curr: 6.20, fecha: 'Ayer 16:45' },
+  { banco: 'Banco Unión',    producto: 'DPF', plazo: '360d', prev: 5.25, curr: 5.50, fecha: 'Hoy 09:30' },
+  { banco: 'BancoSol',       producto: 'DPF', plazo: '180d', prev: 4.10, curr: 4.30, fecha: 'Hoy 08:15' },
+  { banco: 'Banco Fie',      producto: 'DPF', plazo: '720d', prev: 6.00, curr: 6.20, fecha: 'Ayer 16:45' },
   { banco: 'Banco Fortaleza', producto: 'CA', plazo: '—',   prev: 2.40, curr: 2.60, fecha: 'Ayer 14:20' },
-  { banco: 'Banco BISA',    producto: 'DPF', plazo: '1080d', prev: 6.20, curr: 6.40, fecha: 'Ayer 11:00' },
+  { banco: 'Banco BISA',     producto: 'DPF', plazo: '1080d', prev: 6.20, curr: 6.40, fecha: 'Ayer 11:00' },
 ];
 let ALERTS_DATA = [
-  { id: 1, type: 'green', title: 'Nueva tasa DPF — Banco Unión',     msg: 'Banco Unión actualizó su tasa DPF 360d de 5.25% a 5.50%', time: 'Hace 30 min',  read: false },
+  { id: 1, type: 'green', title: 'Nueva tasa DPF — Banco Unión',      msg: 'Banco Unión actualizó su tasa DPF 360d de 5.25% a 5.50%', time: 'Hace 30 min',  read: false },
   { id: 2, type: 'amber', title: 'Inflación actualizada — INE',       msg: 'INE publicó inflación acumulada: 3.21% (+0.12% vs anterior)', time: 'Hace 2 h',   read: false },
-  { id: 3, type: 'blue',  title: 'UFV actualizada — BCB',              msg: 'Nueva UFV: 2.425810 BOB (actualización diaria)',           time: 'Hace 4 h',   read: false },
-  { id: 4, type: 'green', title: 'BancoSol mejora tasa DPF 180d',     msg: 'Tasa pasó de 4.10% a 4.30% en Bolivianos',                 time: 'Ayer 16:45', read: true  },
+  { id: 3, type: 'blue',  title: 'UFV actualizada — BCB',               msg: 'Nueva UFV: 2.425810 BOB (actualización diaria)',           time: 'Hace 4 h',   read: false },
+  { id: 4, type: 'green', title: 'BancoSol mejora tasa DPF 180d',     msg: 'Tasa pasó de 4.10% a 4.30% en Bolivianos',                  time: 'Ayer 16:45', read: true  },
   { id: 5, type: 'amber', title: 'Oportunidad: Banco Fortaleza',      msg: 'Fortaleza ofrece DPF 1080d al 6.90%, mejor del mercado',   time: 'Ayer 14:20', read: true  },
 ];
 
@@ -373,7 +375,6 @@ function initViewCharts(view) {
   }
 }
 
-// [Lógica interna de gráficos omitida por espacio para mantener el foco en la API]
 // ── OVERVIEW CHARTS ────────────────────────────────────────
 function initRatesTrendChart() {
   destroyChart('rates-trend');
