@@ -1,15 +1,16 @@
-/* ================================================================
-   RADAR Financiero — Dashboard JavaScript
-   Conexión directa a Supabase (Serverless)
-   Autenticación simplificada sin contraseña via localStorage
-   ================================================================ */
-
-'use strict';
-
 // ── CONFIGURACIÓN DE SUPABASE ─────────────────────────────────
-// NOTA: Reemplaza estos valores con las credenciales reales de tu panel de Supabase
 const SUPABASE_URL = 'https://uztufuwfuvxjvvrytpsb.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV6dHVmdXdmdXZ4anZ2cnl0cHNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyNTc3MjAsImV4cCI6MjA5NTgzMzcyMH0.QVdaZsNLgnA4aPlxqZBh2c5d5i-MQQd5LNEOSADzdvA';
+
+// Acceso seguro al cliente global de Supabase cargado vía CDN (window.supabase)
+const supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
+// ── CONFIGURACIÓN DE TABLAS DE SUPABASE ───────────────────────
+// SI TU TABLA EN SUPABASE SE LLAMA DIFERENTE, CAMBIA EL TEXTO DE LAS COMILLAS AQUÍ:
+const BANKS_TABLE      = 'banks';
+const RATES_TABLE      = 'rates';      // Ej: si se llama 'tasas', cámbialo a 'tasas'
+const INDICATORS_TABLE = 'indicators'; 
+const USERS_TABLE      = 'users';
 // CORRECCIÓN AQUÍ: Evitamos el choque de nombres declarando 'supabaseApp' y reasignando el cliente global
 const supabaseApp = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 supabase = supabaseApp;
