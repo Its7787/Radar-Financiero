@@ -1,9 +1,10 @@
 /* ============================================================
    RADAR – Lógica del formulario de registro simplificado (sin contraseña)
-   Conexión a través del servidor Express API
+   Conexión directa a la API de Supabase (sin pasar por Express)
    ============================================================ */
 
-const API_BASE = 'http://localhost:3000/api';
+const SUPABASE_URL = "https://uztufuwfuvxjvvrytpsb.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV6dHVmdXdmdXZ4anZ2cnl0cHNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyNTc3MjAsImV4cCI6MjA5NTgzMzcyMH0.QVdaZsNLgnA4aPlxqZBh2c5d5i-MQQd5LNEOSADzdvA";
 
 // ── Referencias al DOM ───────────────────────────────────────
 const form       = document.getElementById('registro-form');
@@ -95,11 +96,14 @@ form.addEventListener('submit', async (e) => {
   try {
     const telefonoCompleto = '+591 ' + telefono.trim().replace(/\D/g, '');
 
-    // Realizar llamada a la API local del backend para guardar en la base de datos Supabase
-    const res = await fetch(`${API_BASE}/registros`, {
+    // Llamada directa a la API Rest de Supabase para guardar en la tabla 'registros'
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/registros`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'Prefer': 'return=representation'
       },
       body: JSON.stringify({
         nombre: nombre.trim(),
@@ -108,11 +112,12 @@ form.addEventListener('submit', async (e) => {
       })
     });
 
+    // Si todo sale bien, Supabase devuelve un arreglo con el objeto creado
     const resData = await res.json();
 
     if (!res.ok) {
       console.error('[RADAR] Error al guardar registro:', resData);
-      showAlert('error', 'Error al guardar el registro: ' + (resData.error || 'Intente de nuevo.'));
+      showAlert('error', 'Error al guardar el registro: ' + (resData.message || 'Intente de nuevo.'));
       setLoading(false);
       return;
     }
