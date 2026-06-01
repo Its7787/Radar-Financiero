@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="RADAR Financiero – Dashboard profesional para inversiones en Bolivia." />
+  <title>RADAR Financiero | Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="css/dashboard.css" />
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- ═══ SIDEBAR ═══════════════════════════════════════════ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-logo">
+        <svg width="32" height="32" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="18" stroke="url(#sg)" stroke-width="2.5"/><circle cx="20" cy="20" r="10" stroke="url(#sg)" stroke-width="2" stroke-dasharray="4 3"/><circle cx="20" cy="20" r="3.5" fill="url(#sg)"/><defs><linearGradient id="sg" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse"><stop stop-color="#50C878"/><stop offset="1" stop-color="#3b82f6"/></linearGradient></defs></svg>
+      </div>
+      <div class="brand-text">
+        <span class="brand-name">RADAR</span>
+        <span class="brand-sub">Financiero</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-group">
+        <span class="nav-group-label">Principal</span>
+        <a class="nav-item active" data-view="overview" id="nav-overview">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          <span>Dashboard</span>
+        </a>
+        <a class="nav-item" data-view="comparador" id="nav-comparador">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          <span>Comparador de Tasas</span>
+        </a>
+        <a class="nav-item" data-view="indicadores" id="nav-indicadores">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+          <span>Indicadores</span>
+        </a>
+      </div>
+
+      <div class="nav-group">
+        <span class="nav-group-label">Herramientas</span>
+        <a class="nav-item" data-view="riesgo" id="nav-riesgo">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span>Modelo de Riesgo</span>
+        </a>
+        <a class="nav-item" data-view="calculadoras" id="nav-calculadoras">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/><line x1="8" y1="18" x2="12" y2="18"/></svg>
+          <span>Calculadoras</span>
+        </a>
+        <a class="nav-item" data-view="watchlist" id="nav-watchlist">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          <span>Watchlist</span>
+          <span class="nav-badge" id="watchlist-count">0</span>
+        </a>
+        <a class="nav-item" data-view="alertas" id="nav-alertas">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span>Alertas</span>
+          <span class="nav-badge alert-badge">3</span>
+        </a>
+      </div>
+
+      <div class="nav-group">
+        <span class="nav-group-label">Sistema</span>
+        <a class="nav-item" data-view="admin" id="nav-admin">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="12" r="10"/></svg>
+          <span>Panel Admin</span>
+        </a>
+        <a class="nav-item" href="index.html">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          <span>Registro Usuarios</span>
+        </a>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="user-avatar">RB</div>
+        <div class="user-info">
+          <span class="user-name">Administrador</span>
+          <span class="user-role">Panel Financiero</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ═══ MAIN ═══════════════════════════════════════════════ -->
+  <div class="main" id="main">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="menu-btn" id="menu-btn" aria-label="Toggle sidebar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <div class="page-title">
+          <h2 id="page-title-text">Dashboard</h2>
+          <span id="page-subtitle">Resumen general del mercado financiero boliviano</span>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div class="search-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" placeholder="Buscar banco, tasa..." id="global-search" autocomplete="off" />
+        </div>
+        <button class="topbar-btn" id="btn-notif" aria-label="Notificaciones">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="topbar-badge">3</span>
+        </button>
+        <div class="topbar-user">
+          <div class="user-avatar sm">RB</div>
+          <span>Admin</span>
+        </div>
+        <div class="live-indicator"><span class="live-dot"></span>En vivo</div>
+      </div>
+    </header>
+
+    <!-- CONTENT AREA -->
+    <main class="content">
+
+      <!-- ══ 1. OVERVIEW ══════════════════════════════════════ -->
+      <section class="view active" id="view-overview">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+            <div class="stat-body">
+              <span class="stat-label">Bancos registrados</span>
+              <span class="stat-value">10</span>
+              <span class="stat-change positive">+2 este mes</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+            <div class="stat-body">
+              <span class="stat-label">Mejor DPF (360d BOB)</span>
+              <span class="stat-value">6.50%</span>
+              <span class="stat-change positive">▲ 0.25% vs mes ant.</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg></div>
+            <div class="stat-body">
+              <span class="stat-label">Inflación acumulada</span>
+              <span class="stat-value">3.21%</span>
+              <span class="stat-change negative">▲ 0.12% vs mes ant.</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+            <div class="stat-body">
+              <span class="stat-label">UFV actual</span>
+              <span class="stat-value">2.4258</span>
+              <span class="stat-change positive">Actualizado hoy</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="charts-row">
+          <div class="chart-card wide">
+            <div class="chart-header">
+              <div>
+                <h3>Evolución Tasas DPF <span class="badge-currency">BOB</span></h3>
+                <p>Últimos 12 meses — Top 3 bancos</p>
+              </div>
+              <div class="chart-controls">
+                <button class="btn-chip active">12M</button>
+                <button class="btn-chip">6M</button>
+                <button class="btn-chip">3M</button>
+              </div>
+            </div>
+            <div class="chart-body"><canvas id="chart-rates-trend"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-header">
+              <div>
+                <h3>Top 5 — Mejor DPF</h3>
+                <p>Tasa a 360 días en BOB</p>
+              </div>
+            </div>
+            <div class="chart-body"><canvas id="chart-top-banks"></canvas></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header-row">
+            <h3>Cambios recientes de tasas</h3>
+            <span class="text-muted">Últimas 48 horas</span>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table" id="table-recent">
+              <thead><tr><th>Banco</th><th>Producto</th><th>Plazo</th><th>Tasa anterior</th><th>Tasa nueva</th><th>Variación</th><th>Fecha</th></tr></thead>
+              <tbody id="tbody-recent"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ 2. COMPARADOR ════════════════════════════════════ -->
+      <section class="view" id="view-comparador">
+        <div class="filter-bar">
+          <div class="filter-search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" placeholder="Buscar banco..." id="comp-search" />
+          </div>
+          <select id="comp-moneda" class="filter-select">
+            <option value="all">Todas las monedas</option>
+            <option value="BOB">Bolivianos (BOB)</option>
+            <option value="USD">Dólares (USD)</option>
+          </select>
+          <select id="comp-sort" class="filter-select">
+            <option value="rate_desc">Mayor tasa primero</option>
+            <option value="rate_asc">Menor tasa primero</option>
+            <option value="bank_az">Banco A-Z</option>
+          </select>
+          <button class="btn-primary-sm" id="btn-compare">Comparar selección</button>
+        </div>
+
+        <div class="tabs-wrap">
+          <div class="tabs">
+            <button class="tab active" data-tab="dpf">DPF</button>
+            <button class="tab" data-tab="ahorro">Cajas de Ahorro</button>
+            <button class="tab" data-tab="credito">Créditos</button>
+          </div>
+        </div>
+
+        <!-- DPF TABLE -->
+        <div class="tab-content active" id="tab-dpf">
+          <div class="card">
+            <div class="table-wrap">
+              <table class="data-table comparador-table" id="table-dpf">
+                <thead>
+                  <tr>
+                    <th><input type="checkbox" id="chk-all-dpf" /></th>
+                    <th>Banco</th><th>Calificación</th>
+                    <th>30d</th><th>60d</th><th>90d</th><th>180d</th><th>360d</th><th>720d</th><th>1080d</th>
+                    <th>Acción</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-dpf"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- AHORRO TABLE -->
+        <div class="tab-content" id="tab-ahorro">
+          <div class="card">
+            <div class="table-wrap">
+              <table class="data-table" id="table-ahorro">
+                <thead><tr><th>Entidad financiera</th><th>Tipo</th><th>Tasa ofrecida (BOB)</th><th>Tasa ofrecida (USD)</th><th>Monto mínimo</th><th>Beneficios</th><th>Calificación</th></tr></thead>
+                <tbody id="tbody-ahorro"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- CREDITO TABLE -->
+        <div class="tab-content" id="tab-credito">
+          <div class="card">
+            <div class="table-wrap">
+              <table class="data-table" id="table-credito">
+                <thead><tr><th>Banco</th><th>Tipo de crédito</th><th>Tasa activa (BOB)</th><th>Tasa activa (USD)</th><th>Plazo máximo</th><th>Costo asociado</th></tr></thead>
+                <tbody id="tbody-credito"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ 3. INDICADORES ═══════════════════════════════════ -->
+      <section class="view" id="view-indicadores">
+        <div class="indicators-grid" id="indicators-grid"></div>
+        <div class="charts-row">
+          <div class="chart-card wide">
+            <div class="chart-header">
+              <div><h3>Inflación mensual</h3><p>Bolivia — Últimos 12 meses (INE)</p></div>
+            </div>
+            <div class="chart-body"><canvas id="chart-inflation"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-header">
+              <div><h3>UFV histórica</h3><p>Últimos 12 meses (BCB)</p></div>
+            </div>
+            <div class="chart-body"><canvas id="chart-ufv"></canvas></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header-row"><h3>Todos los indicadores</h3><span class="text-muted">Fuente: BCB / INE</span></div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead><tr><th>Indicador</th><th>Código</th><th>Valor</th><th>Unidad</th><th>Fuente</th><th>Período</th><th>Variación</th></tr></thead>
+              <tbody id="tbody-indicators"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ 4. MODELO DE RIESGO ══════════════════════════════ -->
+      <section class="view" id="view-riesgo">
+        <div class="two-col">
+          <div class="card risk-form-card">
+            <h3>Evaluar inversión</h3>
+            <p class="text-muted mb-4">Ingresa los parámetros de tu inversión para calcular el riesgo real.</p>
+            <div class="form-group">
+              <label>Capital a invertir (BOB)</label>
+              <input type="number" id="r-capital" placeholder="Ej. 50000" value="50000" />
+            </div>
+            <div class="form-group">
+              <label>Tasa nominal anual (%)</label>
+              <input type="number" id="r-tasa" placeholder="Ej. 5.50" value="5.50" step="0.01" />
+            </div>
+            <div class="form-group">
+              <label>Plazo (días)</label>
+              <input type="number" id="r-plazo" placeholder="Ej. 360" value="360" />
+            </div>
+            <div class="form-group">
+              <label>Inflación estimada (%)</label>
+              <input type="number" id="r-inflacion" placeholder="Ej. 3.21" value="3.21" step="0.01" />
+            </div>
+            <div class="form-group">
+              <label>Variación cambiaria estimada (%)</label>
+              <input type="number" id="r-fx" placeholder="Ej. 0" value="0" step="0.01" />
+            </div>
+            <button class="btn-primary full" id="btn-calcular-riesgo">Calcular riesgo</button>
+          </div>
+
+          <div class="risk-results" id="risk-results">
+            <div class="card risk-score-card" id="risk-score-card">
+              <div class="risk-score-circle" id="risk-circle">
+                <span class="risk-score-num" id="risk-score-num">—</span>
+                <span class="risk-score-label">Score de riesgo</span>
+              </div>
+              <span class="risk-level-badge" id="risk-level-badge">—</span>
+            </div>
+            <div class="result-cards-grid">
+              <div class="result-mini-card">
+                <span class="rmc-label">Rendimiento nominal</span>
+                <span class="rmc-value" id="res-nominal">—</span>
+              </div>
+              <div class="result-mini-card">
+                <span class="rmc-label">Rendimiento real</span>
+                <span class="rmc-value green" id="res-real">—</span>
+              </div>
+              <div class="result-mini-card">
+                <span class="rmc-label">Capital al vencimiento</span>
+                <span class="rmc-value" id="res-capital-final">—</span>
+              </div>
+              <div class="result-mini-card">
+                <span class="rmc-label">Ganancia real</span>
+                <span class="rmc-value green" id="res-ganancia">—</span>
+              </div>
+            </div>
+            <div class="card">
+              <div class="chart-header"><div><h3>Perfil de riesgo</h3><p>Análisis multifactor</p></div></div>
+              <div class="chart-body"><canvas id="chart-risk-radar"></canvas></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ 5. CALCULADORAS ══════════════════════════════════ -->
+      <section class="view" id="view-calculadoras">
+        <div class="tabs-wrap">
+          <div class="tabs">
+            <button class="tab active" data-tab="calc-dpf">Calculadora DPF</button>
+            <button class="tab" data-tab="calc-real">Rendimiento Real</button>
+            <button class="tab" data-tab="calc-sim">Simulador</button>
+          </div>
+        </div>
+
+        <!-- CALC DPF -->
+        <div class="tab-content active" id="tab-calc-dpf">
+          <div class="two-col">
+            <div class="card">
+              <h3>Calculadora DPF</h3>
+              <p class="text-muted mb-4">Calcula el rendimiento de tu Depósito a Plazo Fijo.</p>
+              <div class="form-group"><label>Capital inicial (BOB)</label><input type="number" id="dpf-capital" value="10000" /></div>
+              <div class="form-group"><label>Tasa anual (%)</label><input type="number" id="dpf-tasa" value="5.50" step="0.01" /></div>
+              <div class="form-group"><label>Plazo</label>
+                <select id="dpf-plazo">
+                  <option value="30">30 días</option><option value="60">60 días</option><option value="90">90 días</option>
+                  <option value="180">180 días</option><option value="360" selected>360 días</option>
+                  <option value="720">720 días</option><option value="1080">1080 días</option>
+                </select>
+              </div>
+              <div class="form-group"><label>Moneda</label>
+                <select id="dpf-moneda"><option value="BOB">Bolivianos (BOB)</option><option value="USD">Dólares (USD)</option></select>
+              </div>
+              <button class="btn-primary full" id="btn-calc-dpf">Calcular</button>
+            </div>
+            <div class="card" id="dpf-result-card">
+              <h3>Resultado</h3>
+              <div class="result-hero">
+                <span class="result-hero-label">Capital al vencimiento</span>
+                <span class="result-hero-value" id="dpf-res-total">Bs. 0.00</span>
+              </div>
+              <div class="result-items">
+                <div class="result-item"><span>Capital inicial</span><span id="dpf-res-capital">—</span></div>
+                <div class="result-item"><span>Interés generado</span><span id="dpf-res-interes" class="text-green">—</span></div>
+                <div class="result-item"><span>Tasa efectiva</span><span id="dpf-res-efectiva">—</span></div>
+                <div class="result-item"><span>Plazo</span><span id="dpf-res-plazo">—</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CALC REAL -->
+        <div class="tab-content" id="tab-calc-real">
+          <div class="two-col">
+            <div class="card">
+              <h3>Calculadora de Rendimiento Real</h3>
+              <p class="text-muted mb-4">Descuenta la inflación para conocer tu ganancia real.</p>
+              <div class="form-group"><label>Rentabilidad nominal (%)</label><input type="number" id="real-nominal" value="5.50" step="0.01" /></div>
+              <div class="form-group"><label>Inflación estimada (%)</label><input type="number" id="real-inflacion" value="3.21" step="0.01" /></div>
+              <div class="form-group"><label>Capital (BOB)</label><input type="number" id="real-capital" value="10000" /></div>
+              <button class="btn-primary full" id="btn-calc-real">Calcular</button>
+            </div>
+            <div class="card">
+              <h3>Resultado</h3>
+              <div class="result-hero">
+                <span class="result-hero-label">Rendimiento real (Fisher)</span>
+                <span class="result-hero-value" id="real-res-tasa">0.00%</span>
+              </div>
+              <div class="result-items">
+                <div class="result-item"><span>Tasa nominal</span><span id="real-res-nominal">—</span></div>
+                <div class="result-item"><span>Inflación</span><span id="real-res-inf">—</span></div>
+                <div class="result-item"><span>Poder adquisitivo</span><span id="real-res-poder" class="text-green">—</span></div>
+                <div class="result-item"><span>Pérdida inflacionaria</span><span id="real-res-perdida" class="text-red">—</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SIMULADOR -->
+        <div class="tab-content" id="tab-calc-sim">
+          <div class="card">
+            <div class="card-header-row"><h3>Simulador de Escenarios</h3><p class="text-muted">Compara tu inversión en diferentes condiciones</p></div>
+            <div class="sim-inputs">
+              <div class="form-group"><label>Capital (BOB)</label><input type="number" id="sim-capital" value="50000" /></div>
+              <div class="form-group"><label>Plazo (días)</label><input type="number" id="sim-plazo" value="360" /></div>
+              <button class="btn-primary-sm" id="btn-sim">Simular</button>
+            </div>
+            <div class="table-wrap mt-4">
+              <table class="data-table" id="table-sim">
+                <thead><tr><th>Escenario</th><th>Banco</th><th>Tasa</th><th>Rendimiento nominal</th><th>Rendimiento real</th><th>Capital final</th><th>Recomendación</th></tr></thead>
+                <tbody id="tbody-sim"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ 6. WATCHLIST ══════════════════════════════════════ -->
+      <section class="view" id="view-watchlist">
+        <div class="card">
+          <div class="card-header-row">
+            <h3>Mi Watchlist</h3>
+            <button class="btn-primary-sm" id="btn-add-watch">+ Agregar producto</button>
+          </div>
+          <div id="watchlist-empty" class="empty-state">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            <p>Tu watchlist está vacía</p>
+            <span>Agrega bancos o productos financieros para monitorearlos</span>
+          </div>
+          <div id="watchlist-items" class="watchlist-grid"></div>
+        </div>
+
+        <div class="card mt-4">
+          <div class="card-header-row"><h3>Agregar a Watchlist</h3></div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead><tr><th>Banco</th><th>Producto</th><th>Mejor tasa</th><th>Moneda</th><th>Acción</th></tr></thead>
+              <tbody id="tbody-watch-add"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ 7. ALERTAS ══════════════════════════════════════ -->
+      <section class="view" id="view-alertas">
+        <div class="two-col">
+          <div class="card">
+            <div class="card-header-row"><h3>Notificaciones recientes</h3><button class="btn-text" id="btn-mark-all">Marcar todas como leídas</button></div>
+            <div class="alerts-list" id="alerts-list"></div>
+          </div>
+          <div class="card">
+            <h3>Configurar alertas</h3>
+            <p class="text-muted mb-4">Recibe notificaciones cuando cambien las condiciones del mercado.</p>
+            <div class="toggle-list">
+              <div class="toggle-item"><span>Cambio en tasas DPF</span><label class="toggle"><input type="checkbox" checked /><span class="toggle-slider"></span></label></div>
+              <div class="toggle-item"><span>Nuevas oportunidades</span><label class="toggle"><input type="checkbox" checked /><span class="toggle-slider"></span></label></div>
+              <div class="toggle-item"><span>Actualización UFV</span><label class="toggle"><input type="checkbox" checked /><span class="toggle-slider"></span></label></div>
+              <div class="toggle-item"><span>Cambio inflación INE</span><label class="toggle"><input type="checkbox" /><span class="toggle-slider"></span></label></div>
+              <div class="toggle-item"><span>Alertas de riesgo</span><label class="toggle"><input type="checkbox" /><span class="toggle-slider"></span></label></div>
+              <div class="toggle-item"><span>Boletín semanal</span><label class="toggle"><input type="checkbox" checked /><span class="toggle-slider"></span></label></div>
+            </div>
+            <button class="btn-primary full mt-4">Guardar preferencias</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ 8. ADMIN ══════════════════════════════════════════ -->
+      <section class="view" id="view-admin">
+        <div class="tabs-wrap">
+          <div class="tabs">
+            <button class="tab active" data-tab="admin-bancos">Bancos</button>
+            <button class="tab" data-tab="admin-tasas">Tasas</button>
+            <button class="tab" data-tab="admin-indicadores">Indicadores</button>
+            <button class="tab" data-tab="admin-usuarios">Usuarios</button>
+          </div>
+        </div>
+
+        <!-- ADMIN BANCOS -->
+        <div class="tab-content active" id="tab-admin-bancos">
+          <div class="card">
+            <div class="card-header-row"><h3>Gestión de bancos</h3><button class="btn-primary-sm" id="btn-add-bank">+ Nuevo banco</button></div>
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead><tr><th>Nombre</th><th>Sigla</th><th>Tipo</th><th>Calificación</th><th>Estado</th><th>Acciones</th></tr></thead>
+                <tbody id="tbody-admin-banks"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ADMIN TASAS -->
+        <div class="tab-content" id="tab-admin-tasas">
+          <div class="card">
+            <div class="card-header-row"><h3>Gestión de tasas</h3><button class="btn-primary-sm">+ Nueva tasa</button></div>
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead><tr><th>Banco</th><th>Producto</th><th>Plazo</th><th>Tasa</th><th>Moneda</th><th>Vigencia</th><th>Acciones</th></tr></thead>
+                <tbody id="tbody-admin-tasas"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ADMIN INDICADORES -->
+        <div class="tab-content" id="tab-admin-indicadores">
+          <div class="card">
+            <div class="card-header-row"><h3>Gestión de indicadores</h3><button class="btn-primary-sm">+ Nuevo indicador</button></div>
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead><tr><th>Indicador</th><th>Código</th><th>Valor</th><th>Unidad</th><th>Fuente</th><th>Período</th><th>Acciones</th></tr></thead>
+                <tbody id="tbody-admin-indicators"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ADMIN USUARIOS -->
+        <div class="tab-content" id="tab-admin-usuarios">
+          <div class="card">
+            <div class="card-header-row"><h3>Gestión de usuarios registrados</h3><span class="text-muted">Desde formulario de registro</span></div>
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead><tr><th>#</th><th>Nombre</th><th>Teléfono</th><th>Correo</th><th>Fecha registro</th></tr></thead>
+                <tbody id="tbody-admin-users"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" hidden>
+  <div class="modal" id="modal">
+    <div class="modal-header"><h3 id="modal-title">Modal</h3><button class="modal-close" id="modal-close">✕</button></div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-footer"><button class="btn-ghost" id="modal-cancel">Cancelar</button><button class="btn-primary" id="modal-save">Guardar</button></div>
+  </div>
+</div>
+
+<!-- Supabase SDK (via CDN) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="js/dashboard.js"></script>
+</body>
+</html>

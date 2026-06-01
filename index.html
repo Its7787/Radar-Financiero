@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="RADAR – Regístrate y forma parte de nuestra comunidad financiera." />
+  <title>RADAR | Registro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ─── Fondo animado ─────────────────────────────────── -->
+  <div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <!-- ─── Contenido principal ───────────────────────────── -->
+  <main class="page-wrapper">
+
+    <!-- Logo / branding -->
+    <header class="brand">
+      <div class="brand-icon">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <circle cx="20" cy="20" r="18" stroke="url(#grad)" stroke-width="2.5"/>
+          <circle cx="20" cy="20" r="10" stroke="url(#grad)" stroke-width="2" stroke-dasharray="4 3"/>
+          <circle cx="20" cy="20" r="3" fill="url(#grad)"/>
+          <defs>
+            <linearGradient id="grad" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#6EE7F7"/>
+              <stop offset="1" stop-color="#7C6EF7"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <span class="brand-name">RADAR</span>
+    </header>
+
+    <!-- Tarjeta del formulario -->
+    <!-- Tarjeta del formulario -->
+    <section class="card" role="main" aria-label="Formulario de registro">
+
+      <div class="card-header">
+        <h1 id="card-title">Crear cuenta</h1>
+        <p id="card-subtitle">Únete hoy y empieza a crecer con nosotros</p>
+      </div>
+
+      <!-- Alerta de éxito / error -->
+      <div id="alert" class="alert" role="alert" aria-live="polite" hidden>
+        <span id="alert-icon" class="alert-icon"></span>
+        <span id="alert-msg"></span>
+      </div>
+
+      <form id="registro-form" novalidate autocomplete="off">
+
+        <!-- Nombre completo -->
+        <div class="field" id="field-nombre">
+          <label for="nombre">Nombre completo</label>
+          <div class="input-wrap">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+            <input
+              type="text"
+              id="nombre"
+              name="nombre"
+              placeholder="Ej. Juan García López"
+              maxlength="120"
+              required
+            />
+          </div>
+          <span class="field-error" id="error-nombre"></span>
+        </div>
+
+        <!-- Teléfono -->
+        <div class="field" id="field-telefono">
+          <label for="telefono">Teléfono</label>
+          <div class="input-wrap input-wrap--phone">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.14 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.05 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+            </svg>
+            <span class="phone-prefix">🇧🇴 +591</span>
+            <input
+              type="tel"
+              id="telefono"
+              name="telefono"
+              placeholder="70123456"
+              maxlength="12"
+              required
+            />
+          </div>
+          <span class="field-error" id="error-telefono"></span>
+        </div>
+
+        <!-- Correo electrónico -->
+        <div class="field" id="field-correo">
+          <label for="correo">Correo electrónico</label>
+          <div class="input-wrap">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <rect x="2" y="4" width="20" height="16" rx="2"/>
+              <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+            </svg>
+            <input
+              type="email"
+              id="correo"
+              name="correo"
+              placeholder="Ej. juan@correo.com"
+              maxlength="150"
+              required
+            />
+          </div>
+          <span class="field-error" id="error-correo"></span>
+        </div>
+
+        <!-- Botón enviar -->
+        <button type="submit" id="btn-submit" class="btn-primary">
+          <span id="btn-text">Registrarme ahora</span>
+          <span id="btn-spinner" class="spinner" hidden aria-hidden="true"></span>
+        </button>
+
+      </form>
+
+      <p class="legal">
+        Al registrarte aceptas nuestros <a href="#" id="link-terms">Términos</a> y
+        <a href="#" id="link-privacy">Política de Privacidad</a>.
+      </p>
+
+    </section>
+
+    <footer class="footer">
+      <p>© 2025 RADAR. Todos los derechos reservados.</p>
+    </footer>
+
+  </main>
+
+  <!-- Supabase SDK (via CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

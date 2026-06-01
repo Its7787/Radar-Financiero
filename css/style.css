@@ -1,0 +1,367 @@
+/* ============================================================
+   RADAR – Estilos globales
+   ============================================================ */
+
+/* ── Variables ────────────────────────────────────────────── */
+:root {
+  --bg:          #080c14;
+  --surface:     #0e1524;
+  --surface-2:   #131d30;
+  --border:      rgba(110, 231, 247, 0.12);
+  --border-hover:rgba(110, 231, 247, 0.30);
+
+  --cyan:        #6ee7f7;
+  --violet:      #7c6ef7;
+  --green:       #4ade80;
+  --red:         #f87171;
+
+  --text-primary:   #eef2ff;
+  --text-secondary: #8b9ab8;
+  --text-muted:     #4a5568;
+
+  --radius:  16px;
+  --radius-sm: 10px;
+  --shadow:  0 24px 80px rgba(0,0,0,.6);
+
+  --transition: .25s cubic-bezier(.4,0,.2,1);
+}
+
+/* ── Reset ────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text-primary);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-x: hidden;
+}
+
+/* ── Orbes de fondo ───────────────────────────────────────── */
+.bg-orbs {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: .45;
+  animation: float 12s ease-in-out infinite;
+}
+
+.orb-1 {
+  width: 520px; height: 520px;
+  background: radial-gradient(circle, #7c6ef7 0%, transparent 70%);
+  top: -160px; left: -160px;
+  animation-delay: 0s;
+}
+
+.orb-2 {
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, #6ee7f7 0%, transparent 70%);
+  bottom: -100px; right: -100px;
+  animation-delay: -4s;
+}
+
+.orb-3 {
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, #4ade80 0%, transparent 70%);
+  top: 55%; left: 55%;
+  opacity: .20;
+  animation-delay: -8s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%       { transform: translate(30px, -30px) scale(1.05); }
+  66%       { transform: translate(-20px, 20px) scale(.97); }
+}
+
+/* ── Contenedor principal ─────────────────────────────────── */
+.page-wrapper {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 480px;
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+/* ── Branding ─────────────────────────────────────────────── */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-icon svg {
+  width: 44px; height: 44px;
+  filter: drop-shadow(0 0 12px rgba(110,231,247,.5));
+  animation: pulse-icon 3s ease-in-out infinite;
+}
+
+@keyframes pulse-icon {
+  0%, 100% { filter: drop-shadow(0 0 8px rgba(110,231,247,.4)); }
+  50%       { filter: drop-shadow(0 0 20px rgba(110,231,247,.8)); }
+}
+
+.brand-name {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: .2em;
+  background: linear-gradient(135deg, var(--cyan), var(--violet));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Tarjeta ──────────────────────────────────────────────── */
+.card {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 40px 36px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  animation: slide-up .5s cubic-bezier(.4,0,.2,1) both;
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.card-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.card-header h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+
+.card-header p {
+  color: var(--text-secondary);
+  font-size: .95rem;
+  font-weight: 400;
+}
+
+/* ── Alerta ───────────────────────────────────────────────── */
+.alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  border-radius: var(--radius-sm);
+  font-size: .9rem;
+  font-weight: 500;
+  margin-bottom: 24px;
+  animation: slide-up .3s ease both;
+}
+
+.alert[hidden] { display: none !important; }
+
+.alert.success {
+  background: rgba(74, 222, 128, .12);
+  border: 1px solid rgba(74, 222, 128, .35);
+  color: var(--green);
+}
+
+.alert.error {
+  background: rgba(248, 113, 113, .12);
+  border: 1px solid rgba(248, 113, 113, .35);
+  color: var(--red);
+}
+
+.alert-icon { font-size: 1.1rem; flex-shrink: 0; }
+
+/* ── Campos ───────────────────────────────────────────────── */
+.field {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.field label {
+  font-size: .85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: .03em;
+  text-transform: uppercase;
+}
+
+.input-wrap {
+  position: relative;
+}
+
+.input-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px; height: 18px;
+  color: var(--text-muted);
+  pointer-events: none;
+  transition: color var(--transition);
+}
+
+.input-wrap input {
+  width: 100%;
+  padding: 14px 16px 14px 44px;
+  background: var(--surface-2);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: .97rem;
+  transition: border-color var(--transition), box-shadow var(--transition);
+  outline: none;
+}
+
+.input-wrap input::placeholder { color: var(--text-muted); }
+
+.input-wrap input:hover { border-color: var(--border-hover); }
+
+.input-wrap input:focus {
+  border-color: var(--cyan);
+  box-shadow: 0 0 0 3px rgba(110, 231, 247, .15);
+}
+
+.input-wrap input:focus + .input-icon,
+.input-wrap:focus-within .input-icon {
+  color: var(--cyan);
+}
+
+/* Campo con error */
+.field.has-error .input-wrap input {
+  border-color: var(--red);
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, .12);
+}
+
+/* ── Prefijo de teléfono (+591) ───────────────────────────── */
+.input-wrap--phone {
+  position: relative;
+}
+
+.phone-prefix {
+  position: absolute;
+  left: 44px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: .88rem;
+  font-weight: 600;
+  color: var(--cyan);
+  pointer-events: none;
+  white-space: nowrap;
+  letter-spacing: .02em;
+  user-select: none;
+}
+
+.input-wrap--phone input {
+  padding-left: 110px !important;
+}
+
+.field-error {
+  font-size: .8rem;
+  color: var(--red);
+  min-height: 1rem;
+  font-weight: 500;
+}
+
+/* ── Botón ────────────────────────────────────────────────── */
+.btn-primary {
+  margin-top: 8px;
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, var(--cyan) 0%, var(--violet) 100%);
+  color: #080c14;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: opacity var(--transition), transform var(--transition), box-shadow var(--transition);
+  box-shadow: 0 4px 24px rgba(110, 231, 247, .25);
+}
+
+.btn-primary:hover:not(:disabled) {
+  opacity: .9;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 32px rgba(110, 231, 247, .35);
+}
+
+.btn-primary:active:not(:disabled) { transform: translateY(0); }
+
+.btn-primary:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+/* ── Spinner ──────────────────────────────────────────────── */
+.spinner {
+  width: 18px; height: 18px;
+  border: 2.5px solid rgba(8,12,20,.3);
+  border-top-color: #080c14;
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+
+.spinner[hidden] { display: none !important; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Legal ────────────────────────────────────────────────── */
+.legal {
+  margin-top: 20px;
+  text-align: center;
+  font-size: .78rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.legal a {
+  color: var(--cyan);
+  text-decoration: none;
+  transition: opacity var(--transition);
+}
+
+.legal a:hover { opacity: .75; text-decoration: underline; }
+
+/* ── Footer ───────────────────────────────────────────────── */
+.footer {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: .78rem;
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 520px) {
+  .card { padding: 30px 22px; }
+  .card-header h1 { font-size: 1.45rem; }
+  .brand-name { font-size: 1.7rem; }
+}
