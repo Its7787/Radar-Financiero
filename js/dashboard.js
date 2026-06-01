@@ -2,18 +2,15 @@
 const SUPABASE_URL = 'https://uztufuwfuvxjvvrytpsb.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV6dHVmdXdmdXZ4anZ2cnl0cHNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyNTc3MjAsImV4cCI6MjA5NTgzMzcyMH0.QVdaZsNLgnA4aPlxqZBh2c5d5i-MQQd5LNEOSADzdvA';
 
-// Acceso seguro al cliente global de Supabase cargado vía CDN (window.supabase)
+// Acceso e inicialización segura utilizando el SDK global cargado vía CDN
 const supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
 // ── CONFIGURACIÓN DE TABLAS DE SUPABASE ───────────────────────
-// SI TU TABLA EN SUPABASE SE LLAMA DIFERENTE, CAMBIA EL TEXTO DE LAS COMILLAS AQUÍ:
+// Si tus tablas en Supabase cambian de nombre, edita el texto de las comillas aquí:
 const BANKS_TABLE      = 'banks';
-const RATES_TABLE      = 'rates';      // Ej: si se llama 'tasas', cámbialo a 'tasas'
+const RATES_TABLE      = 'rates';      // Ej: si en tu BD la cambias a 'tasas', pon 'tasas' aquí
 const INDICATORS_TABLE = 'indicators'; 
 const USERS_TABLE      = 'users';
-// CORRECCIÓN AQUÍ: Evitamos el choque de nombres declarando 'supabaseApp' y reasignando el cliente global
-const supabaseApp = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-supabase = supabaseApp;
 
 // ── ESTADOS DE LA APLICACIÓN ─────────────────────────────────
 let sessionUser = null;
@@ -25,7 +22,7 @@ let AHORRO_RATES = [];
 let CREDITO_RATES = [];
 let INDICATORS = [];
 let RECENT_CHANGES = [
-  { banco: 'Banco Unión',    producto: 'DPF', plazo: '360d', prev: 5.25, curr: 5.50, fecha: 'Hoy 09:30' },
+  { banco: 'Banco Unión',   producto: 'DPF', plazo: '360d', prev: 5.25, curr: 5.50, fecha: 'Hoy 09:30' },
   { banco: 'BancoSol',       producto: 'DPF', plazo: '180d', prev: 4.10, curr: 4.30, fecha: 'Hoy 08:15' },
   { banco: 'Banco Fie',      producto: 'DPF', plazo: '720d', prev: 6.00, curr: 6.20, fecha: 'Ayer 16:45' },
   { banco: 'Banco Fortaleza', producto: 'CA', plazo: '—',   prev: 2.40, curr: 2.60, fecha: 'Ayer 14:20' },
@@ -35,7 +32,7 @@ let ALERTS_DATA = [
   { id: 1, type: 'green', title: 'Nueva tasa DPF — Banco Unión',      msg: 'Banco Unión actualizó su tasa DPF 360d de 5.25% a 5.50%', time: 'Hace 30 min',  read: false },
   { id: 2, type: 'amber', title: 'Inflación actualizada — INE',       msg: 'INE publicó inflación acumulada: 3.21% (+0.12% vs anterior)', time: 'Hace 2 h',   read: false },
   { id: 3, type: 'blue',  title: 'UFV actualizada — BCB',               msg: 'Nueva UFV: 2.425810 BOB (actualización diaria)',           time: 'Hace 4 h',   read: false },
-  { id: 4, type: 'green', title: 'BancoSol mejora tasa DPF 180d',     msg: 'Tasa pasó de 4.10% a 4.30% en Bolivianos',                  time: 'Ayer 16:45', read: true  },
+  { id: 4, type: 'green', title: 'BancoSol mejora tasa DPF 180d',     msg: 'Tasa pasó de 4.10% a 4.30% en Bolivianos',                   time: 'Ayer 16:45', read: true  },
   { id: 5, type: 'amber', title: 'Oportunidad: Banco Fortaleza',      msg: 'Fortaleza ofrece DPF 1080d al 6.90%, mejor del mercado',   time: 'Ayer 14:20', read: true  },
 ];
 
@@ -86,10 +83,14 @@ function checkAuth() {
 
 // ── CARGA DINÁMICA DE DATOS DESDE SUPABASE ─────────────────────
 async function loadAllData() {
+  if (!supabase) {
+    console.error('[RADAR] El cliente de Supabase no se ha inicializado correctamente.');
+    return;
+  }
   try {
     // 1. Obtener Bancos
     const { data: banksData, error: banksErr } = await supabase
-      .from('banks')
+      .from(BANKS_TABLE)
       .select('*')
       .order('name', { ascending: true });
 
@@ -98,7 +99,7 @@ async function loadAllData() {
 
     // 2. Obtener Tasas con sus Relaciones (Joins)
     const { data: ratesData, error: ratesErr } = await supabase
-      .from('rates')
+      .from(RATES_TABLE)
       .select(`
         id,
         rate,
@@ -118,7 +119,7 @@ async function loadAllData() {
 
     // 3. Obtener Indicadores Económicos
     const { data: indicatorsData, error: indicatorsErr } = await supabase
-      .from('indicators')
+      .from(INDICATORS_TABLE)
       .select('*')
       .order('code', { ascending: true });
 
@@ -277,7 +278,7 @@ const PAGE_TITLES = {
   overview:     ['Dashboard', 'Resumen general del mercado financiero boliviano'],
   comparador:   ['Comparador de Tasas', 'Compara DPF, cajas de ahorro y créditos'],
   indicadores:  ['Indicadores Económicos', 'Bolivia — Banco Central & INE'],
-  riesgo:       ['Modelo de Riesgo', 'Evalúa el riesgo real de tu inversión'],
+  riesgo:        ['Modelo de Riesgo', 'Evalúa el riesgo real de tu inversión'],
   calculadoras: ['Calculadoras', 'DPF, rendimiento real y simulador de escenarios'],
   watchlist:    ['Mi Watchlist', 'Productos financieros guardados'],
   alertas:      ['Alertas', 'Notificaciones y configuración de alertas'],
@@ -431,6 +432,7 @@ function initTopBanksChart() {
   });
 }
 
+// ── INDICADORES CHARTS ──────────────────────────────────────
 function initInflationChart() {
   destroyChart('inflation');
   const ctx = document.getElementById('chart-inflation')?.getContext('2d');
@@ -497,6 +499,7 @@ function getRatingClass(r) {
   return 'rating-bbb';
 }
 
+// ── RENDER SYSTEM FUNCTIONS ───────────────────────────────────
 function renderRecentChanges() {
   const tbody = document.getElementById('tbody-recent');
   if (!tbody) return;
@@ -580,7 +583,7 @@ function renderIndicators() {
   }
 }
 
-// ── CRUD PANEL ADMINISTRATIVO (CONEXIÓN DIRECTA A SUPABASE) ───
+// ── CRUD PANEL ADMINISTRATIVO (CONEXIÓN CENTRALIZADA) ────────
 function renderAdminBanks() {
   const tbody = document.getElementById('tbody-admin-banks');
   if (!tbody) return;
@@ -639,7 +642,7 @@ async function renderAdminUsers() {
   tbody.innerHTML = `<tr><td colspan="5" class="text-muted" style="padding:20px;text-align:center">Cargando usuarios...</td></tr>`;
   try {
     const { data: users, error } = await supabase
-      .from('users')
+      .from(USERS_TABLE)
       .select('*')
       .order('created_at', { ascending: false });
 
@@ -667,7 +670,7 @@ window.deleteBank = async function(id) {
   if (!confirm('¿Estás seguro de eliminar este banco y todos sus productos asociados?')) return;
   try {
     const { error } = await supabase
-      .from('banks')
+      .from(BANKS_TABLE)
       .delete()
       .eq('id', id);
 
@@ -680,7 +683,7 @@ window.deleteRate = async function(id) {
   if (!confirm('¿Estás seguro de eliminar esta tasa de interés?')) return;
   try {
     const { error } = await supabase
-      .from('rates')
+      .from(RATES_TABLE)
       .delete()
       .eq('id', id);
 
@@ -693,7 +696,7 @@ window.deleteIndicator = async function(id) {
   if (!confirm('¿Estás seguro de eliminar este indicador económico?')) return;
   try {
     const { error } = await supabase
-      .from('indicators')
+      .from(INDICATORS_TABLE)
       .delete()
       .eq('id', id);
 
