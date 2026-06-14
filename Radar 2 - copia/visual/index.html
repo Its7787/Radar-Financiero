@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro Moderno y Seguro</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Estilos CSS -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Supabase CDN para conexión directa frontend como fallback -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class="background-decorations">
+        <div class="glow-orb orb-1"></div>
+        <div class="glow-orb orb-2"></div>
+        <div class="glow-orb orb-3"></div>
+    </div>
+
+    <main class="main-container">
+        <div class="glass-card">
+            <div class="card-header">
+                <div class="logo-area">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="logo-icon">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                    </svg>
+                </div>
+                <h1>Únete a Nosotros</h1>
+                <p class="subtitle">Registra tus datos de forma rápida y segura en nuestra base de datos integrada.</p>
+            </div>
+
+            <!-- Toast / Notificaciones del sistema -->
+            <div id="toast-message" class="toast hidden">
+                <span class="toast-icon"></span>
+                <span class="toast-text"></span>
+            </div>
+
+            <form id="registration-form" class="registration-form" novalidate>
+                <!-- Nombre Completo -->
+                <div class="input-group">
+                    <label for="nombre_completo">Nombre Completo</label>
+                    <div class="input-wrapper">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="input-icon">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        <input type="text" id="nombre_completo" name="nombre_completo" placeholder="Ej. Juan Pérez" required autocomplete="name">
+                    </div>
+                    <span class="validation-message" id="error-nombre">El nombre es requerido.</span>
+                </div>
+
+                <!-- Teléfono -->
+                <div class="input-group">
+                    <label for="telefono">Teléfono (Bolivia)</label>
+                    <div class="input-wrapper">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="input-icon">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                        </svg>
+                        <input type="tel" id="telefono" name="telefono" placeholder="Ej. +591 71234567" value="+591 " required autocomplete="tel">
+                    </div>
+                    <span class="validation-message" id="error-telefono">Debe ingresar un número de Bolivia válido (+591 seguido de 8 dígitos).</span>
+                </div>
+
+                <!-- Correo Electrónico -->
+                <div class="input-group">
+                    <label for="correo">Correo Electrónico</label>
+                    <div class="input-wrapper">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="input-icon">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                            <polyline points="22,6 12,13 2,6"/>
+                        </svg>
+                        <input type="email" id="correo" name="correo" placeholder="Ej. juan@correo.com" required autocomplete="email">
+                    </div>
+                    <span class="validation-message" id="error-correo">El correo es requerido y debe tener un formato válido.</span>
+                </div>
+
+                <!-- Botón de Envío -->
+                <button type="submit" id="submit-btn" class="submit-button">
+                    <span class="btn-text">Enviar Registro</span>
+                    <span class="spinner hidden"></span>
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <!-- JS de Funcionalidades -->
+    <script src="../funcionalidades/app.js" defer></script>
+</body>
+</html>

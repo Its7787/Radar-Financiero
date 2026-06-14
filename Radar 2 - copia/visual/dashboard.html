@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radar Financiero - Bolivia</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Supabase CDN (para fallback directo si el backend Node no está encendido) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Estilos CSS -->
+    <link rel="stylesheet" href="dashboard.css">
+    <!-- Protección contra accesos no registrados -->
+    <script>
+        if (localStorage.getItem('userRegistered') !== 'true') {
+            window.location.href = window.location.protocol === 'file:' ? 'index.html' : '/';
+        }
+    </script>
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- SIDEBAR DE NAVEGACIÓN -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-logo">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="logo-svg">
+                        <line x1="18" y1="20" x2="18" y2="10"/>
+                        <line x1="12" y1="20" x2="12" y2="4"/>
+                        <line x1="6" y1="20" x2="6" y2="14"/>
+                    </svg>
+                </div>
+                <h2>Radar Financiero</h2>
+            </div>
+            <nav class="sidebar-menu">
+                <a href="#" class="menu-item active" data-tab="resumen">
+                    <span class="menu-icon">📈</span> Resumen General
+                </a>
+                <a href="#" class="menu-item" data-tab="comparador">
+                    <span class="menu-icon">🔍</span> Comparador de Tasas
+                </a>
+                <a href="#" class="menu-item" data-tab="indicadores">
+                    <span class="menu-icon">📊</span> Indicadores BCB / UFV
+                </a>
+                <a href="#" class="menu-item" data-tab="riesgo">
+                    <span class="menu-icon">🛡️</span> Modelo de Riesgo
+                </a>
+                <a href="#" class="menu-item" data-tab="calculadoras">
+                    <span class="menu-icon">🧮</span> Calculadoras
+                </a>
+                <a href="#" class="menu-item" data-tab="favoritos">
+                    <span class="menu-icon">⭐</span> Watchlist y Alertas
+                </a>
+                <a href="#" class="menu-item admin-only hidden" data-tab="admin" id="menu-admin">
+                    <span class="menu-icon">⚙️</span> Panel Administrador
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <button id="logout-btn" class="btn-logout">Cerrar Sesión</button>
+            </div>
+        </aside>
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <div class="main-content">
+            <!-- HEADER SUPERIOR -->
+            <header class="main-header">
+                <div class="header-title">
+                    <h1 id="tab-title">Resumen General</h1>
+                </div>
+                <div class="header-user">
+                    <!-- Switch para cambiar de rol y simular Admin -->
+                    <div class="role-selector">
+                        <span class="role-label">Simular Administrador:</span>
+                        <label class="switch">
+                            <input type="checkbox" id="admin-role-toggle">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="user-profile">
+                        <span class="user-avatar" id="avatar-letters">US</span>
+                        <div class="user-info">
+                            <span class="user-name" id="profile-name">Cargando...</span>
+                            <span class="user-role" id="profile-role">Usuario Inversionista</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- TOAST / NOTIFICACIONES FLOTANTES -->
+            <div id="dashboard-toast" class="toast hidden">
+                <span class="toast-text"></span>
+            </div>
+
+            <!-- CONTENEDOR DE PESTAÑAS (SPA) -->
+            <main class="content-container">
+
+                <!-- 1. PESTAÑA: RESUMEN GENERAL -->
+                <section id="tab-resumen" class="tab-panel active">
+                    <div class="metric-grid">
+                        <div class="metric-card">
+                            <div class="card-icon">💵</div>
+                            <div class="metric-info">
+                                <span class="metric-title">UFV Diario</span>
+                                <h3 id="metric-ufv">Bs. 2.4789</h3>
+                                <span class="metric-trend up">▲ Valor oficial BCB</span>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="card-icon">📈</div>
+                            <div class="metric-info">
+                                <span class="metric-title">Inflación Anualizada</span>
+                                <h3 id="metric-inflacion">3.12%</h3>
+                                <span class="metric-trend down">▼ Controlado por INE</span>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="card-icon">🔄</div>
+                            <div class="metric-info">
+                                <span class="metric-title">Tipo de Cambio Oficial</span>
+                                <h3>Bs. 6.96</h3>
+                                <span class="metric-trend neutral">● Sin variación</span>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="card-icon">🏦</div>
+                            <div class="metric-info">
+                                <span class="metric-title">Tasa Pasiva Promedio (DPF)</span>
+                                <h3 id="metric-tasa-promedio">5.68%</h3>
+                                <span class="metric-trend up">▲ Mayor a la inflación</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-row">
+                        <div class="chart-container card-panel">
+                            <h3>Rendimiento Promedio de DPFs vs Cajas de Ahorro</h3>
+                            <div class="chart-wrapper">
+                                <canvas id="ratesChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="alerts-summary card-panel">
+                            <h3>Alertas y Oportunidades Recientes</h3>
+                            <div class="alerts-list" id="resumen-alerts-list">
+                                <!-- Se llena dinámicamente -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-panel mt-20">
+                        <h3>Mejores Tasas Disponibles en DPF Bolivia (360 Días)</h3>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Banco</th>
+                                        <th>Producto</th>
+                                        <th>Tasa Anual</th>
+                                        <th>Monto Mínimo</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="best-rates-table">
+                                    <!-- Cargado por JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. PESTAÑA: COMPARADOR DE TASAS -->
+                <section id="tab-comparador" class="tab-panel">
+                    <div class="filter-bar card-panel">
+                        <div class="search-box">
+                            <input type="text" id="comp-search" placeholder="Buscar por banco o producto...">
+                        </div>
+                        <div class="filter-selectors">
+                            <select id="comp-type">
+                                <option value="all">Todos los Productos</option>
+                                <option value="dpf">Depósitos a Plazo Fijo (DPF)</option>
+                                <option value="caja_ahorro">Cajas de Ahorro</option>
+                                <option value="credito">Créditos</option>
+                            </select>
+                            <select id="comp-sort">
+                                <option value="rate-desc">Tasa (Mayor a Menor)</option>
+                                <option value="rate-asc">Tasa (Menor a Mayor)</option>
+                                <option value="bank-asc">Banco (A-Z)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="card-panel">
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Banco</th>
+                                        <th>Tipo Producto</th>
+                                        <th>Nombre Producto</th>
+                                        <th>Tasa Anual</th>
+                                        <th>Plazo</th>
+                                        <th>Monto Mínimo</th>
+                                        <th>Guardar</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="comparador-table">
+                                    <!-- Cargado por JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 3. PESTAÑA: INDICADORES ECONOMICOS -->
+                <section id="tab-indicadores" class="tab-panel">
+                    <div class="dashboard-row">
+                        <div class="card-panel w-50">
+                            <h3>Indicadores del Banco Central de Bolivia (BCB)</h3>
+                            <p class="subtitle mb-20">Última actualización según datos oficiales.</p>
+                            <div class="indicators-list" id="indicators-list-details">
+                                <!-- Se llena dinámicamente -->
+                            </div>
+                        </div>
+                        <div class="card-panel w-50">
+                            <h3>Evolución de Variables Macroeconómicas</h3>
+                            <div class="chart-wrapper">
+                                <canvas id="indicatorsChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 4. PESTAÑA: MODELO DE RIESGO FINANCIERO -->
+                <section id="tab-riesgo" class="tab-panel">
+                    <div class="card-panel">
+                        <h2>Análisis de Pérdida de Poder Adquisitivo</h2>
+                        <p class="subtitle">Evaluamos el rendimiento nominal frente a la inflación para calcular el rendimiento real del capital.</p>
+                        
+                        <div class="dashboard-row mt-20">
+                            <div class="risk-metric-card text-center">
+                                <h4>Rendimiento Nominal Promedio (DPF)</h4>
+                                <h2 class="text-primary">5.68%</h2>
+                            </div>
+                            <div class="risk-metric-card text-center">
+                                <h4>Tasa de Inflación Boliviana</h4>
+                                <h2 class="text-error" id="risk-inflation-val">3.12%</h2>
+                            </div>
+                            <div class="risk-metric-card text-center">
+                                <h4>Rendimiento Real Neto</h4>
+                                <h2 class="text-success" id="risk-real-val">2.48%</h2>
+                            </div>
+                        </div>
+
+                        <div class="mt-20">
+                            <h3>Rendimiento Real Estimado de su Inversión</h3>
+                            <div class="risk-calculator-form mt-20">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="risk-amount">Capital a Invertir (Bs.)</label>
+                                        <input type="number" id="risk-amount" value="10000" min="100">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="risk-rate">Tasa Nominal Anual (%)</label>
+                                        <input type="number" id="risk-rate" value="5.68" step="0.01">
+                                    </div>
+                                </div>
+                                <button type="button" class="btn-primary" id="btn-calc-risk">Calcular Rendimiento Real</button>
+                            </div>
+                            <div class="risk-result-box hidden mt-20" id="risk-result">
+                                <h3>Resultados Ajustados por Inflación</h3>
+                                <div class="table-responsive mt-10">
+                                    <table class="data-table">
+                                        <tbody>
+                                            <tr>
+                                                <td>Capital Inicial:</td>
+                                                <td id="res-risk-capital" class="font-bold">10,000.00 Bs</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Interés Nominal Ganado (1 año):</td>
+                                                <td id="res-risk-nominal" class="text-primary font-bold">+568.00 Bs</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Pérdida por Inflación (Poder Adquisitivo):</td>
+                                                <td id="res-risk-loss" class="text-error font-bold">-312.00 Bs</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Rendimiento Real Final:</td>
+                                                <td id="res-risk-net" class="text-success font-bold">+248.25 Bs</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 5. PESTAÑA: CALCULADORAS FINANCIERAS -->
+                <section id="tab-calculadoras" class="tab-panel">
+                    <div class="tabs-sub">
+                        <button class="tab-sub-btn active" data-sub="calc-dpf">Calculadora de DPF</button>
+                        <button class="tab-sub-btn" data-sub="calc-real">Calculadora de Rendimiento Real</button>
+                        <button class="tab-sub-btn" data-sub="calc-sim">Simulador Financiero</button>
+                    </div>
+
+                    <!-- Calculadora DPF -->
+                    <div id="sub-calc-dpf" class="sub-tab-panel active card-panel">
+                        <h3>Simulación de Depósitos a Plazo Fijo</h3>
+                        <form id="form-calc-dpf" class="financial-form mt-20">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="dpf-capital">Capital de Inversión (Bs.)</label>
+                                    <input type="number" id="dpf-capital" value="5000" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="dpf-tasa">Tasa de Interés Nominal (%)</label>
+                                    <input type="number" id="dpf-tasa" value="6.0" step="0.01" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="dpf-plazo">Plazo (Días)</label>
+                                    <input type="number" id="dpf-plazo" value="360" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn-primary">Calcular Rendimiento</button>
+                        </form>
+                        <div class="result-card hidden mt-20" id="dpf-result">
+                            <h4>Rendimiento Estimado DPF</h4>
+                            <div class="result-grid">
+                                <div>
+                                    <span class="label">Capital Inicial:</span>
+                                    <span class="value" id="val-dpf-capital">5,000 Bs</span>
+                                </div>
+                                <div>
+                                    <span class="label">Interés Acumulado:</span>
+                                    <span class="value text-success" id="val-dpf-interes">300 Bs</span>
+                                </div>
+                                <div>
+                                    <span class="label">Monto Total Recibido:</span>
+                                    <span class="value" id="val-dpf-total">5,300 Bs</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Calculadora de Rendimiento Real -->
+                    <div id="sub-calc-real" class="sub-tab-panel card-panel">
+                        <h3>Ajuste por Inflación de Rendimientos</h3>
+                        <form id="form-calc-real" class="financial-form mt-20">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="real-nominal">Rentabilidad Nominal Anual (%)</label>
+                                    <input type="number" id="real-nominal" value="6.0" step="0.01" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="real-inflacion">Tasa de Inflación Anual Proyectada (%)</label>
+                                    <input type="number" id="real-inflacion" value="3.12" step="0.01" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn-primary">Calcular Rentabilidad Real</button>
+                        </form>
+                        <div class="result-card hidden mt-20" id="real-result">
+                            <h4>Rentabilidad Real Neta</h4>
+                            <h2 class="text-success text-center" id="val-real-result">2.79%</h2>
+                            <p class="text-center subtitle mt-10">Este es el porcentaje neto que tu dinero crecerá en términos de poder adquisitivo real.</p>
+                        </div>
+                    </div>
+
+                    <!-- Simulador de Escenarios -->
+                    <div id="sub-calc-sim" class="sub-tab-panel card-panel">
+                        <h3>Simulador de Escenarios Económicos</h3>
+                        <p class="subtitle mb-20">Compara el comportamiento de tu capital bajo tres posibles escenarios de la economía de Bolivia.</p>
+                        
+                        <div class="form-group mb-20">
+                            <label for="sim-capital">Capital de Inversión Inicial (Bs.)</label>
+                            <input type="number" id="sim-capital" value="10000" min="100" class="w-100-percent">
+                        </div>
+
+                        <div class="scenario-grid">
+                            <div class="scenario-card">
+                                <h4 class="text-success">Escenario Optimista</h4>
+                                <p>Inflación controlada y tasas estables.</p>
+                                <ul>
+                                    <li>Tasa Nominal: 6.50%</li>
+                                    <li>Inflación: 2.00%</li>
+                                    <li><strong>Ganancia Real: <span id="sim-opt-real">441 Bs</span></strong></li>
+                                </ul>
+                            </div>
+                            <div class="scenario-card">
+                                <h4 class="text-primary">Escenario Base (Actual)</h4>
+                                <p>Condiciones de mercado actuales.</p>
+                                <ul>
+                                    <li>Tasa Nominal: 5.68%</li>
+                                    <li>Inflación: 3.12%</li>
+                                    <li><strong>Ganancia Real: <span id="sim-base-real">248 Bs</span></strong></li>
+                                </ul>
+                            </div>
+                            <div class="scenario-card">
+                                <h4 class="text-error">Escenario Pesimista</h4>
+                                <p>Presión inflacionaria elevada.</p>
+                                <ul>
+                                    <li>Tasa Nominal: 5.00%</li>
+                                    <li>Inflación: 6.50%</li>
+                                    <li><strong>Ganancia Real: <span id="sim-pes-real">-141 Bs</span></strong></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 6. PESTAÑA: WATCHLIST Y ALERTAS -->
+                <section id="tab-favoritos" class="tab-panel">
+                    <div class="dashboard-row">
+                        <div class="card-panel w-50">
+                            <h3>Mis Productos Financieros en Seguimiento (Watchlist)</h3>
+                            <p class="subtitle mb-20">Monitorea los productos que has guardado como favoritos.</p>
+                            <div class="watchlist-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Banco</th>
+                                            <th>Producto</th>
+                                            <th>Tasa</th>
+                                            <th>Acción</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="watchlist-table-body">
+                                        <!-- Cargado por JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="card-panel w-50">
+                            <h3>Buzón de Alertas Recientes</h3>
+                            <p class="subtitle mb-20">Notificaciones automáticas del comportamiento de tasas en Bolivia.</p>
+                            <div class="alerts-list-large" id="alerts-list-container">
+                                <!-- Se llena dinámicamente -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 7. PESTAÑA: PANEL ADMINISTRADOR -->
+                <section id="tab-admin" class="tab-panel">
+                    <div class="admin-grid">
+                        <!-- CRUD Bancos -->
+                        <div class="card-panel">
+                            <h3>Gestión de Bancos</h3>
+                            <form id="admin-bank-form" class="admin-form mt-10">
+                                <div class="form-group">
+                                    <label for="admin-bank-name">Nombre del Banco</label>
+                                    <input type="text" id="admin-bank-name" placeholder="Ej. Banco BISA" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="admin-bank-logo">URL del Logo (Opcional)</label>
+                                    <input type="url" id="admin-bank-logo" placeholder="https://ejemplo.com/logo.png">
+                                </div>
+                                <button type="submit" class="btn-primary mt-10">Agregar Banco</button>
+                            </form>
+                            <div class="admin-list-container mt-20">
+                                <h4>Bancos Registrados</h4>
+                                <ul id="admin-banks-list" class="admin-list">
+                                    <!-- Llenado por JS -->
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- CRUD Tasas de Interés -->
+                        <div class="card-panel">
+                            <h3>Registrar Nueva Tasa / Producto</h3>
+                            <form id="admin-rate-form" class="admin-form mt-10">
+                                <div class="form-group">
+                                    <label for="admin-rate-bank">Banco Emisor</label>
+                                    <select id="admin-rate-bank" required>
+                                        <!-- Cargado por JS -->
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="admin-rate-type">Tipo de Producto</label>
+                                    <select id="admin-rate-type" required>
+                                        <option value="dpf">Depósito a Plazo Fijo (DPF)</option>
+                                        <option value="caja_ahorro">Caja de Ahorro</option>
+                                        <option value="credito">Crédito</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="admin-rate-name">Nombre Comercial</label>
+                                    <input type="text" id="admin-rate-name" placeholder="Ej. Súper DPF Unión" required>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="admin-rate-value">Tasa Anual (%)</label>
+                                        <input type="number" id="admin-rate-value" placeholder="Ej. 6.2" step="0.01" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="admin-rate-term">Plazo (Días)</label>
+                                        <input type="number" id="admin-rate-term" placeholder="Ej. 360">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="admin-rate-min">Monto Mínimo (Bs.)</label>
+                                    <input type="number" id="admin-rate-min" placeholder="Ej. 1000" value="0">
+                                </div>
+                                <button type="submit" class="btn-primary mt-10">Registrar Producto</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- CRUD Indicadores y Lista de Usuarios -->
+                    <div class="admin-grid mt-20">
+                        <div class="card-panel">
+                            <h3>Gestión de Indicadores Económicos</h3>
+                            <div class="table-responsive">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Indicador</th>
+                                            <th>Valor</th>
+                                            <th>Unidad</th>
+                                            <th>Acción</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="admin-indicators-table">
+                                        <!-- Cargado por JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="card-panel">
+                            <h3>Usuarios Registrados (Logs de Acceso)</h3>
+                            <div class="table-responsive">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Nombre Completo</th>
+                                            <th>Correo</th>
+                                            <th>Teléfono</th>
+                                            <th>Fecha Registro</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="admin-users-table">
+                                        <!-- Cargado por JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- JS del Dashboard -->
+    <script src="../funcionalidades/dashboard.js" defer></script>
+</body>
+</html>
